@@ -1,9 +1,9 @@
 import Board from "./board.js";
 
 let board = new Board(); // creates a new game board
-let remainingMoves = 20;
-
-console.log(board.grid);
+let remainingMoves = 0;
+let remainingShips = 0;
+// console.log(board.grid);
 
 const startGame = document.querySelector("#start-game");
 const restartGame = document.querySelector("#restart-game");
@@ -29,8 +29,18 @@ const fillGameBoard = () => {
     }
 };
 
-// Check game state
+// Check game state for win or gameover
 const checkGameState = () => {
+    if (remainingShips === 0) {
+        movesLeft.innerText = "You Won!!!";
+        const gridItems = document.querySelectorAll(".grid-item");
+        gridItems.forEach((item) => {
+            if (!item.classList.contains("hit")) {
+                item.classList.add("hit");
+            }
+        });
+        return false;
+    }
     if (remainingMoves === 0) {
         movesLeft.innerText = "Game Over!";
         // update ui for all grid items
@@ -46,6 +56,11 @@ const checkGameState = () => {
 
 // Start game
 startGame.addEventListener("click", () => {
+    // board = new Board(); // creates a ngame boardew
+    remainingMoves = 20;
+    remainingShips = 17;
+    movesLeft.innerText = `Lives Left: ${remainingMoves}`;
+    containerGrid.innerHTML = "";
     fillGameBoard();
 });
 
@@ -64,12 +79,13 @@ containerGrid.addEventListener("click", (e) => {
             if (possibleHit) {
                 currentDiv.classList.add("hit");
                 currentDiv.innerText = possibleHit;
+                remainingShips--;
             } else {
                 currentDiv.classList.add("miss");
                 remainingMoves--;
             }
         }
-        movesLeft.innerText = `Moves Left: ${remainingMoves}`;
+        movesLeft.innerText = `Lives Left: ${remainingMoves}`;
     }
 
     checkGameState();
@@ -77,9 +93,11 @@ containerGrid.addEventListener("click", (e) => {
 // restart game
 restartGame.addEventListener("click", () => {
     remainingMoves = 20;
+    remainingShips = 17;
+    movesLeft.innerText = `Lives Left: ${remainingMoves}`;
     containerGrid.innerHTML = "";
     board = new Board();
     // Refill the board
     fillGameBoard();
-    console.log(board);
+    // console.log(board);
 });
